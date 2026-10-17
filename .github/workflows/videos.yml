@@ -1,0 +1,71 @@
+name: Videos automaticos
+
+on:
+  schedule:
+    - cron: "23 * * * *"        # cada hora (en el minuto 23). Si no toca vídeo, termina en segundos.
+  workflow_dispatch:            # botón "Run workflow" para probar a mano
+    inputs:
+      modo:
+        description: "borrador = prueba (se queda en Borradores de Buffer) · ahora = publicar YA · auto = siguiente hora"
+        type: choice
+        default: borrador
+        options: [borrador, ahora, auto]
+
+permissions:
+  contents: write               # para guardar los vídeos en la rama 'videos'
+
+concurrency:
+  group: videos
+  cancel-in-progress: false
+
+jobs:
+  video:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    env:
+      BUFFER_API_KEY: ${{ secrets.BUFFER_API_KEY }}
+      MODO: ${{ github.event.inputs.modo || 'auto' }}
+      # ======== AJUSTES QUE PUEDES CAMBIAR ========
+      HORARIOS: "09:00,14:00,21:00"     # horas de publicación (hora de España)
+      ZONA: "Europe/Madrid"
+      REDES: "tiktok,instagram"         # quita una si solo quieres la otra
+      ETIQUETA_IA_INSTAGRAM: "si"       # etiqueta "IA" en los Reels
+      ETIQUETA_IA_TIKTOK: "no"          # pon "si" para marcar también en TikTok "Contenido generado por IA"
+      MODELO_IA: "qwen2.5:7b"           # más rápido: "qwen2.5:3b"
+      # ============================================
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Toca video ahora
+        id: toca
+        run: python nube.py --toca
+
+      - name: Instalar programas
+        if: steps.toca.outputs.toca == 'si'
+        run: |
+          pip install -q requests feedparser trafilatura edge-tts pillow static-ffmpeg tzdata
+          python -c "import static_ffmpeg; static_ffmpeg.add_paths()"
+
+      - name: Cache del modelo de IA
+        if: steps.toca.outputs.toca == 'si'
+        uses: actions/cache@v4
+        with:
+          path: ~/.ollama/models
+          key: ollama-${{ env.MODELO_IA }}-v1
+
+      - name: Arrancar la IA (Ollama)
+        if: steps.toca.outputs.toca == 'si'
+        run: |
+          curl -fsSL https://ollama.com/install.sh | sh
+          sudo systemctl stop ollama 2>/dev/null || true
+          nohup ollama serve > ollama.log 2>&1 &
+          for i in $(seq 1 30); do curl -s localhost:11434 >/dev/null && break; sleep 1; done
+          ollama pull "$MODELO_IA"
+
+      - name: Crear video y programarlo en Buffer
+        if: steps.toca.outputs.toca == 'si'
+        run: python nube.py
