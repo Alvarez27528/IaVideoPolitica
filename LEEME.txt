@@ -1,0 +1,89 @@
+VÍDEOS EN LA NUBE GRATIS (GitHub + Buffer), CON EL PC APAGADO
+===============================================================
+
+CÓMO FUNCIONA
+- GitHub (gratis) enciende un ordenador en la nube cada hora.
+- Cuando falta 1 hora y media o menos para una de tus horas (09:00, 14:00 y 21:00):
+  lee las noticias de ESE momento, hace el vídeo con IA, voz y subtítulos,
+  y lo deja programado en Buffer para TikTok e Instagram a esa hora.
+- Buffer lo publica. Tu PC puede estar apagado.
+- Si algo falla, GitHub te manda un correo.
+
+------------------------------------------------------------------
+PASO 1 - BUFFER (5 min)
+------------------------------------------------------------------
+1. Crea una cuenta gratis en https://buffer.com
+2. Conecta tu TikTok y tu Instagram ("Connect channel").
+   * Instagram tiene que ser cuenta PROFESIONAL (gratis). En la app de Instagram:
+     Ajustes > Tipo de cuenta y herramientas > Cambiar a cuenta profesional > Creador.
+3. Crea tu clave de la API en https://publish.buffer.com/settings/api
+   ("Create API key"). Cópiala y guárdala, la necesitas en el paso 3.
+
+------------------------------------------------------------------
+PASO 2 - GITHUB (5 min)
+------------------------------------------------------------------
+1. Crea una cuenta gratis en https://github.com
+2. Arriba a la derecha pulsa "+" > "New repository".
+   - Name: videos-politica (o el que quieras)
+   - Marca PUBLIC (así es gratis y sin límite de minutos)
+   - Pulsa "Create repository".
+3. En la página nueva pulsa "uploading an existing file".
+   Descomprime nube_github.zip y ARRASTRA TODO SU CONTENIDO:
+   nube.py, agente_tiktok_v2.py, LEEME.txt y la carpeta .github
+   Pulsa "Commit changes".
+   * Comprueba que aparece la carpeta ".github". Si no aparece:
+     Add file > Create new file, escribe como nombre  .github/workflows/videos.yml
+     y pega dentro el contenido de ese archivo.
+
+------------------------------------------------------------------
+PASO 3 - PONER LA CLAVE DE BUFFER (1 min)
+------------------------------------------------------------------
+En tu repositorio: Settings > Secrets and variables > Actions > "New repository secret"
+   Name:   BUFFER_API_KEY
+   Secret: (pega la clave de Buffer)
+Pulsa "Add secret". La clave queda escondida, nadie la puede ver.
+
+------------------------------------------------------------------
+PASO 4 - PRIMERA PRUEBA (15 min, sin publicar nada)
+------------------------------------------------------------------
+1. Ve a la pestaña "Actions". Si te pregunta, pulsa "I understand my workflows, go ahead and enable them".
+2. A la izquierda pulsa "Videos automaticos" > botón "Run workflow" > modo: borrador > "Run workflow".
+3. Espera unos 10-15 minutos (la primera vez descarga la IA). Cuando salga el check verde:
+   en Buffer verás el vídeo en BORRADORES (Drafts) de TikTok e Instagram. Así compruebas que funciona.
+
+------------------------------------------------------------------
+PASO 5 - ACTIVAR LA WEB DE LOS VÍDEOS (1 min)
+------------------------------------------------------------------
+Después de la primera prueba ya existe la rama "videos":
+Settings > Pages > Source: "Deploy from a branch" > Branch: videos  /(root) > Save.
+(Buffer descarga los vídeos desde ahí.)
+
+------------------------------------------------------------------
+PASO 6 - PRUEBA DE VERDAD
+------------------------------------------------------------------
+Actions > Videos automaticos > Run workflow > modo: ahora.
+Se publica YA en TikTok e Instagram. Mira que salga bien en las dos.
+
+A partir de aquí no tienes que hacer nada: funciona solo todos los días.
+
+------------------------------------------------------------------
+CAMBIAR COSAS
+------------------------------------------------------------------
+Abre .github/workflows/videos.yml en GitHub, pulsa el lápiz (editar) y cambia:
+  HORARIOS: "09:00,14:00,21:00"
+  REDES: "tiktok,instagram"
+  ETIQUETA_IA_TIKTOK: "no"  (pon "si" para la etiqueta de IA también en TikTok)
+Luego pulsa "Commit changes".
+
+IMPORTANTE: si usas la nube, apaga lo del PC para que no se publique dos veces:
+ejecuta DESACTIVAR_INICIO_AUTOMATICO.bat y, en el Programador de tareas de Windows,
+borra "TikTok - Encender PC" y "TikTok - Apagar PC".
+
+------------------------------------------------------------------
+SI ALGO FALLA
+------------------------------------------------------------------
+- Actions > pulsa la ejecución en rojo > al final verás "Problemas" con el motivo.
+- Plan gratis de Buffer: 3 redes y 10 publicaciones en cola por red. Con 3 vídeos al día
+  sobra, porque cada vídeo se programa solo 1 hora y media antes.
+- Si TikTok da un error de "url" o "domain" (Buffer a veces exige que el vídeo esté en una web verificada),
+  cópiame el mensaje y lo cambio.
