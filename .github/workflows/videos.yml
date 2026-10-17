@@ -26,11 +26,11 @@ jobs:
       BUFFER_API_KEY: ${{ secrets.BUFFER_API_KEY }}
       MODO: ${{ github.event.inputs.modo || 'auto' }}
       # ======== AJUSTES QUE PUEDES CAMBIAR ========
-      HORARIOS: "09:00,14:00,21:00"     # horas de publicación (hora de España)
+      HORARIOS: "09:00,21:00"     # horas de publicación (hora de España)
       ZONA: "Europe/Madrid"
       REDES: "tiktok,instagram"         # quita una si solo quieres la otra
       ETIQUETA_IA_INSTAGRAM: "si"       # etiqueta "IA" en los Reels
-      ETIQUETA_IA_TIKTOK: "no"          # pon "si" para marcar también en TikTok "Contenido generado por IA"
+      ETIQUETA_IA_TIKTOK: "si"          # pon "si" para marcar también en TikTok "Contenido generado por IA"
       MODELO_IA: "qwen2.5:7b"           # más rápido: "qwen2.5:3b"
       # ============================================
     steps:
