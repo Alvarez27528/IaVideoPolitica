@@ -1,0 +1,100 @@
+{
+ "huecos": {
+  "2026-10-21T21:00:00+02:00": {
+   "posts": {
+    "tiktok": {
+     "ok": true,
+     "id": "6ad9094f68c8c0a061781af7",
+     "estado": "scheduled",
+     "revisado": true,
+     "enlace": "https://tiktok.com/@politicasinfiltrosesp/video/7699197973850246432"
+    },
+    "instagram": {
+     "ok": true,
+     "id": "6ad9094f4a5e9f5a0f2d87fd",
+     "estado": "scheduled",
+     "revisado": true,
+     "enlace": "https://www.instagram.com/reel/DexG99hCd0c/"
+    }
+   },
+   "intentos": 1,
+   "video": "20261021_2100_milei-confronta-a-sanchez-en-madrid.mp4",
+   "titulo": "Milei confronta a Sánchez en Madrid",
+   "fuente": "El País",
+   "link": "https://elpais.com/espana/2026-10-21/milei-participa-en-un-desayuno-informativo-en-madrid-durante-su-visita-a-espana.html",
+   "texto": "Luis Miguel Milei, economista argentino, busca confrontar con el presidente Sánchez en Madrid. ¿Puede Milei impactar la política española? #Política #España #Milei #Sánchez #PP #Elecciones\n\n#Política #España #Milei #Sánchez #PP #Elecciones #politica #españa #noticias #politicasinfiltros\n\nFuente: El País",
+   "url": "https://alvarez27528.github.io/IaVideoPolitica/v/20261021_2100_milei-confronta-a-sanchez-en-madrid.mp4"
+  },
+  "2026-10-22T21:00:00+02:00": {
+   "posts": {
+    "tiktok": {
+     "ok": true,
+     "id": "6ada59e69a8a68d3cd753bf3",
+     "estado": "scheduled",
+     "revisado": true,
+     "enlace": "https://tiktok.com/@politicasinfiltrosesp/video/7699569111604415776"
+    },
+    "instagram": {
+     "ok": true,
+     "id": "6ada59e6ca69a1b7d3d0d06a",
+     "estado": "scheduled",
+     "revisado": true,
+     "enlace": "https://www.instagram.com/reel/Dezrx-oCUyr/"
+    }
+   },
+   "intentos": 1,
+   "video": "20261022_2100_pp-elige-a-cayetana-y-borja-para-madrid.mp4",
+   "titulo": "PP elige a Cayetana y Borja para Madrid",
+   "fuente": "elDiario.es",
+   "link": "https://www.eldiario.es/politica/feijoo-elige-cayetana-alvarez-toledo-numero-madrid-borja-semper-numero-tres_1_13605274.html",
+   "texto": "El PP ha elegido a Cayetana Álvarez de Toledo y Borja Sémper para sus listas en Madrid. ¿Qué implicaciones tienen estas designaciones para las elecciones del 29 de noviembre?\n\n#PPMadrid #Elecciones2023 #CayetanaÁlvarezdeToledo #BorjaSémper #Feijóo #PP #politica #españa #noticias #politicasinfiltros\n\nFuente: elDiario.es",
+   "url": "https://alvarez27528.github.io/IaVideoPolitica/v/20261022_2100_pp-elige-a-cayetana-y-borja-para-madrid.mp4"
+  },
+  "2026-10-23T21:00:00+02:00": {
+   "posts": {
+    "tiktok": {
+     "ok": true,
+     "id": "6adba9080b5343d070463c8c",
+     "estado": "scheduled",
+     "revisado": true,
+     "enlace": "https://tiktok.com/@politicasinfiltrosesp/video/7699940240470887713"
+    },
+    "instagram": {
+     "ok": true,
+     "id": "6adba908e4be8a4d861ebd2d",
+     "estado": "scheduled",
+     "revisado": true,
+     "enlace": "https://www.instagram.com/reel/De2QlGBlATp/"
+    }
+   },
+   "intentos": 1,
+   "video": "20261023_2100_una-mas-segun-el-gobierno.mp4",
+   "titulo": "Una más, según el Gobierno",
+   "fuente": "El País",
+   "link": "https://elpais.com/opinion/2026-09-29/maricarmen-una-mas-de-las-que-impulsaron-un-cambio.html",
+   "texto": "Maricarmen, una de las figuras clave en el cambio del Congreso, según el Gobierno. El PP denuncia irregularidades en su caso. ¿Qué piensas de su implicación en la política?\n\n#Política #Congreso #Irregularidades #PP #Gobierno #Cambio #politica #españa #noticias #politicasinfiltros\n\nFuente: El País",
+   "url": "https://alvarez27528.github.io/IaVideoPolitica/v/20261023_2100_una-mas-segun-el-gobierno.mp4"
+  },
+  "2026-10-24T09:00:00+02:00": {
+   "posts": {
+    "tiktok": {
+     "ok": true,
+     "id": "6adc4b453d5b27036b6d3522",
+     "estado": "scheduled"
+    },
+    "instagram": {
+     "ok": true,
+     "id": "6adc4b45bd33ce99c30b04e8",
+     "estado": "scheduled"
+    }
+   },
+   "intentos": 1,
+   "video": "20261024_0900_victimas-denuncian-negacion-acceso-inves.mp4",
+   "titulo": "Víctimas denuncian negación acceso investigación",
+   "fuente": "El País",
+   "link": "https://elpais.com/espana/2026-10-24/la-fiscalia-de-cataluna-niega-a-tres-victimas-el-acceso-a-la-investigacion-sobre-las-violaciones-que-sufrieron.html",
+   "texto": "La fiscalía de Cataluña niega acceso a tres víctimas del caso de violaciones de los años noventa. Denuncian que la ley les otorga este derecho. ¿Qué ocurre con la verdad de sus casos? #Verdad #Justicia\n\n#Verdad #Justicia #DerechosVíctimas #Investigación #Transparencia #Denuncia #politica #españa #noticias #politicasinfiltros\n\nFuente: El País",
+   "url": "https://alvarez27528.github.io/IaVideoPolitica/v/20261024_0900_victimas-denuncian-negacion-acceso-inves.mp4"
+  }
+ }
+}
