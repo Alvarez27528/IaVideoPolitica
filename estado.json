@@ -1,0 +1,75 @@
+{
+ "huecos": {
+  "2026-10-27T21:00:00+01:00": {
+   "posts": {
+    "tiktok": {
+     "ok": true,
+     "id": "6ae0f3870df7e3b21596aed5",
+     "estado": "scheduled",
+     "revisado": true,
+     "enlace": "https://www.tiktok.com/@politicasinfiltrosesp/video/7701440012797087009?utm_campaign=tt4d_open_api&utm_source=7103819247981182978"
+    },
+    "instagram": {
+     "ok": true,
+     "id": "6ae0f388ffe45e9612e692ce",
+     "estado": "scheduled",
+     "revisado": true,
+     "enlace": "https://www.instagram.com/reel/DfAqoXOCKJd/"
+    }
+   },
+   "intentos": 1,
+   "video": "20261027_2100_pp-impone-candidatos-vox-al-senado.mp4",
+   "titulo": "PP impone candidatos Vox al Senado",
+   "fuente": "El País",
+   "link": "https://elpais.com/espana/elecciones-generales/2026-10-26/vox-impone-al-pp-candidatos-independientes-al-senado-muy-vinculados-al-partido-de-la-exjefa-de-prensa-de-ortega-smith-a-un-exconseller-de-mazon.html",
+   "texto": "El PP ha incluido en sus listas al Senado a candidatos de Vox, como Alba Moreno y José Luis Aguirre, en 14 circunscripciones. ¿Crees que este acuerdo será efectivo?\n\n#PP #Vox #Senado #Política #Pactos #España #politica #españa #noticias #politicasinfiltros\n\nFuente: El País",
+   "url": "https://alvarez27528.github.io/IaVideoPolitica/v/20261027_2100_pp-impone-candidatos-vox-al-senado.mp4"
+  },
+  "2026-10-30T09:00:00+01:00": {
+   "posts": {
+    "tiktok": {
+     "ok": true,
+     "id": "6ae445804b8768bfb2e63231",
+     "estado": "scheduled",
+     "revisado": true,
+     "enlace": "https://tiktok.com/@politicasinfiltrosesp/video/7702368238188891424"
+    },
+    "instagram": {
+     "ok": true,
+     "id": "6ae445816385db216a2e30fe",
+     "estado": "scheduled",
+     "revisado": true,
+     "enlace": "https://www.instagram.com/reel/DfHGlwxD72I/"
+    }
+   },
+   "intentos": 1,
+   "video": "20261030_0900_atocha-cien-operarios-gestionan-trafico.mp4",
+   "titulo": "Atocha: cien operarios gestionan tráfico",
+   "fuente": "El País",
+   "link": "https://elpais.com/espana/2026-10-30/centro-de-control-de-atocha-un-centenar-de-operarios-entre-la-presion-del-trafico-y-un-software-de-vanguardia.html",
+   "texto": "Centro de Control de Atocha opera con cien operarios. Sistema sofisticado garantiza eficiencia. ¿Cómo funciona este moderno sistema?\n\n#metroatocha #operariosmetro #softwareeficiente #gobiernomadrid #transporte #eficiencia #politica #españa #noticias #politicasinfiltros\n\nFuente: El País",
+   "url": "https://alvarez27528.github.io/IaVideoPolitica/v/20261030_0900_atocha-cien-operarios-gestionan-trafico.mp4"
+  },
+  "2026-10-30T21:00:00+01:00": {
+   "posts": {
+    "tiktok": {
+     "ok": true,
+     "id": "6ae4f22ca11457434966832c",
+     "estado": "scheduled"
+    },
+    "instagram": {
+     "ok": true,
+     "id": "6ae4f22ca114574349668365",
+     "estado": "scheduled"
+    }
+   },
+   "intentos": 1,
+   "video": "20261030_2100_sanchez-denuncia-confianza-quebrada.mp4",
+   "titulo": "Sánchez denuncia confianza quebrada",
+   "fuente": "El País",
+   "link": "https://elpais.com/espana/2026-10-30/sanchez-hay-una-confianza-quebrada-en-el-sistema-de-alta-velocidad.html",
+   "texto": "Sánchez reconoce problemas en alta velocidad. ¿Cómo está impactando esta situación en los viajeros? #Gobierno #PP #AltaVelocidad #ConfianzaQuebrada #ProblemasViajes\n\n#Gobierno #PP #AltaVelocidad #ConfianzaQuebrada #ProblemasViajes #politica #españa #noticias #politicasinfiltros\n\nFuente: El País",
+   "url": "https://alvarez27528.github.io/IaVideoPolitica/v/20261030_2100_sanchez-denuncia-confianza-quebrada.mp4"
+  }
+ }
+}
