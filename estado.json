@@ -1,0 +1,75 @@
+{
+ "huecos": {
+  "2026-11-02T09:00:00+01:00": {
+   "posts": {
+    "tiktok": {
+     "ok": true,
+     "id": "6ae82f2476279ec7eb9880a1",
+     "estado": "scheduled",
+     "revisado": true,
+     "enlace": "https://tiktok.com/@politicasinfiltrosesp/video/7703480878302874913"
+    },
+    "instagram": {
+     "ok": true,
+     "id": "6ae82f24c60bdbcc33dcbd15",
+     "estado": "scheduled",
+     "revisado": true,
+     "enlace": "https://www.instagram.com/reel/DfO0-qyEt84/"
+    }
+   },
+   "intentos": 1,
+   "video": "20261102_0900_investigacion-de-urda-se-prolongara-anos.mp4",
+   "titulo": "Investigación de Urda se prolongará años",
+   "fuente": "El País",
+   "link": "https://elpais.com/espana/2026-11-02/la-tragedia-de-urda-encara-un-largo-camino-ante-la-justicia.html",
+   "texto": "Tragedia ferroviaria de Urda: largo camino judicial. Antecedentes de otros accidentes demuestran largas investigaciones. ¿Cuánto tiempo tardará en concluirse?\n\n#Urda #TragediaFerroviaria #InvestigaciónLarga #AccidentesFerroviarios #Justicia #Orgaz #politica #españa #noticias #politicasinfiltros\n\nFuente: El País",
+   "url": "https://alvarez27528.github.io/IaVideoPolitica/v/20261102_0900_investigacion-de-urda-se-prolongara-anos.mp4"
+  },
+  "2026-11-03T09:00:00+01:00": {
+   "posts": {
+    "tiktok": {
+     "ok": true,
+     "id": "6ae987c66896a4441f67ddb1",
+     "estado": "scheduled",
+     "revisado": true,
+     "enlace": "https://tiktok.com/@politicasinfiltrosesp/video/7703851996482227489"
+    },
+    "instagram": {
+     "ok": true,
+     "id": "6ae987c73b00665c737ce28b",
+     "estado": "scheduled",
+     "revisado": true,
+     "enlace": "https://www.instagram.com/reel/DfRZxuKAYKF/"
+    }
+   },
+   "intentos": 1,
+   "video": "20261103_0900_sanchez-retoma-campana-tras-accidente.mp4",
+   "titulo": "Sánchez retoma campaña tras accidente",
+   "fuente": "El Mundo",
+   "link": "https://www.elmundo.es/comunidad-valenciana/2026/11/02/6ae8bc7afc6c837f528b4577.html",
+   "texto": "Sánchez retoma campaña tras accidente. Visita Valencia y Bilbao. ¿Cómo afectará esto a la precampaña electoral?\n\n#SánchezCampaña #ValenciaBilbao #AccidenteFerroviario #PrecampañaElectoral #PolíticaEspaña #PedroSánchez #politica #españa #noticias #politicasinfiltros\n\nFuente: El Mundo",
+   "url": "https://alvarez27528.github.io/IaVideoPolitica/v/20261103_0900_sanchez-retoma-campana-tras-accidente.mp4"
+  },
+  "2026-11-05T09:00:00+01:00": {
+   "posts": {
+    "tiktok": {
+     "ok": true,
+     "id": "6aec2b04e22643a9879783c1",
+     "estado": "scheduled"
+    },
+    "instagram": {
+     "ok": true,
+     "id": "6aec2b0580f7fd0537f71977",
+     "estado": "scheduled"
+    }
+   },
+   "intentos": 1,
+   "video": "20261105_0900_accidente-de-urda-clave-en-los-trenes.mp4",
+   "titulo": "Accidente de Urda: clave en los trenes",
+   "fuente": "El País",
+   "link": "https://elpais.com/espana/2026-11-05/lzb-ertms-y-cdi-113-200-una-semana-descifrando-los-17-minutos-del-accidente-de-urda.html",
+   "texto": "LZB, ERTMS y CDI 113 + 200: ¿cómo podrían prevenir accidentes ferroviarios? Según el Gobierno, estas tecnologías son cruciales. El PP critica falta de inversión. ¿Qué opinas?\n\n#LZB #ERTMS #CDI113 #Urda #AccidenteFerroviario #PolíticaTransporte #politica #españa #noticias #politicasinfiltros\n\nFuente: El País",
+   "url": "https://alvarez27528.github.io/IaVideoPolitica/v/20261105_0900_accidente-de-urda-clave-en-los-trenes.mp4"
+  }
+ }
+}
