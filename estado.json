@@ -1,0 +1,50 @@
+{
+ "huecos": {
+  "2026-11-14T09:00:00+01:00": {
+   "posts": {
+    "tiktok": {
+     "ok": true,
+     "id": "6af804a44b28296eb13db094",
+     "estado": "scheduled",
+     "revisado": true,
+     "enlace": "https://tiktok.com/@politicasinfiltrosesp/video/7707933925720591649"
+    },
+    "instagram": {
+     "ok": true,
+     "id": "6af804a4d8bd2962e410b54e",
+     "estado": "scheduled",
+     "revisado": true,
+     "enlace": "https://www.instagram.com/reel/DftuhKlFVv0/"
+    }
+   },
+   "intentos": 1,
+   "video": "20261114_0900_pp-y-psoe-se-acercan.mp4",
+   "titulo": "PP y PSOE se acercan",
+   "fuente": "El País",
+   "link": "https://elpais.com/espana/elecciones-generales/2026-11-14/la-diferencia-entre-pp-y-psoe-se-estrecha-segun-el-tracking-diario-de-40db.html",
+   "texto": "Según el 'tracking' diario de 40dB, la brecha entre PP y PSOE se estrecha. ¿Qué factores influyen en esta evolución?\n\n#PP #PSOE #política #España #40dB #votaciones #politica #españa #noticias #politicasinfiltros\n\nFuente: El País",
+   "url": "https://alvarez27528.github.io/IaVideoPolitica/v/20261114_0900_pp-y-psoe-se-acercan.mp4"
+  },
+  "2026-11-14T21:00:00+01:00": {
+   "posts": {
+    "tiktok": {
+     "ok": true,
+     "id": "6af8b48176c23bf1c736af3a",
+     "estado": "scheduled"
+    },
+    "instagram": {
+     "ok": true,
+     "id": "6af8b482b9a106584c65489f",
+     "estado": "scheduled"
+    }
+   },
+   "intentos": 1,
+   "video": "20261114_2100_colau-contraataca-modelo-pp-en-sanidad.mp4",
+   "titulo": "Colau contraataca modelo PP en sanidad",
+   "fuente": "El País",
+   "link": "https://elpais.com/espana/elecciones-generales/2026-11-14/colau-contrapone-su-propuesta-para-ampliar-la-cobertura-de-la-sanidad-publica-con-el-modelo-debilitado-del-pp-en-andalucia.html",
+   "texto": "Ada Colau propone ampliar cobertura sanitaria en Andalucía frente a modelo ‘debilitado’ del PP. ¿Crees que su estrategia será efectiva?\n\n#AdaColau #PPenAndalucía #SanidadPublica #FrenteAmplio #PolíticaEspaña #Andalucía #politica #españa #noticias #politicasinfiltros\n\nFuente: El País",
+   "url": "https://alvarez27528.github.io/IaVideoPolitica/v/20261114_2100_colau-contraataca-modelo-pp-en-sanidad.mp4"
+  }
+ }
+}
