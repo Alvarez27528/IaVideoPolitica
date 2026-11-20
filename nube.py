@@ -24,6 +24,7 @@ ZONA = os.environ.get("ZONA", "Europe/Madrid")
 REDES = [r.strip().lower() for r in os.environ.get("REDES", "tiktok,instagram").split(",") if r.strip()]
 ANTELACION_MIN = int(os.environ.get("ANTELACION_MIN", "110"))   # hace el vídeo como mucho X min antes
 RETRASO_MAX_MIN = int(os.environ.get("RETRASO_MAX_MIN", "40"))  # si GitHub va con retraso, publica igual
+AVISOS = os.environ.get("AVISOS", "aviso").strip().lower()   # aviso | rojo | none
 SI = ("si", "sí", "true", "1", "yes")
 IA_INSTAGRAM = os.environ.get("ETIQUETA_IA_INSTAGRAM", "si").lower() in SI
 IA_TIKTOK = os.environ.get("ETIQUETA_IA_TIKTOK", "no").lower() in SI
@@ -150,6 +151,69 @@ def hueco_que_toca(e, ahora):
             if reg is None or (redes_pendientes(reg) and reg.get("intentos", 0) < 3):
                 return t
     return None
+
+
+def huecos_perdidos(e, ahora):
+    """Horas de publicacion que YA pasaron y nunca quedaron programadas.
+
+    Es el aviso que faltaba: si el cron se salta una carrera, o Buffer rechazo el
+    post y se gastaron los 3 intentos, antes no se enteraba nadie y al dia siguiente
+    nobody decia nada. Aqui marcamos cada hueco una sola vez (campo "avisado") para
+    no repetir el aviso cada hora.
+    """
+    tz = zona()
+    local = ahora.astimezone(tz)
+    if not e.get("huecos"):
+        return []            # estado recien creado: no avisamos de huecos de antes de existir
+    faltan, hoy = [], local.date()
+    for d in (0, -1):
+        dia = local + timedelta(days=d)
+        if dia.date() != hoy and d == -1 and not any(k[:10] == str(dia.date()) for k in e["huecos"]):
+            continue         # de ayer solo si ayer hubo actividad (evita avisos falsos al instalar)
+        for h in sorted(HORARIOS):
+            hh, mm = map(int, h.split(":"))
+            t = datetime(dia.year, dia.month, dia.day, hh, mm, tzinfo=tz)
+            if t >= local - timedelta(minutes=RETRASO_MAX_MIN):
+                continue                      # aun esta a tiempo
+            if local - t > timedelta(hours=30):
+                continue
+            reg = e["huecos"].get(t.isoformat())
+            if reg is None or redes_pendientes(reg):
+                if not (reg or {}).get("avisado"):
+                    faltan.append((t, "no se llego a hacer el video" if reg is None
+                                   else "el video se hizo pero Buffer no lo tiene: "
+                                        + "; ".join(f"{r}: {(p or {}).get('error') or 'sin enviar'}"
+                                                    for r, p in (reg.get("posts") or {}).items())))
+    return faltan
+
+
+def avisar_perdidos():
+    """Lo llama el paso 'Toca video ahora'. Devuelve True si hay que poner la carrera en rojo."""
+    if AVISOS == "none":
+        return False
+    ahora = datetime.now(timezone.utc)
+    tz = zona()
+    e = cargar_estado()
+    perdidos = huecos_perdidos(e, ahora)
+    if not perdidos:
+        return False
+    lineas = [f"{t.astimezone(tz):%d/%m %H:%M}: {mot}" for t, mot in perdidos]
+    for t, _ in perdidos:
+        reg = e["huecos"].setdefault(t.isoformat(), {"posts": {}, "intentos": 0})
+        reg["avisado"] = True
+    guardar_estado(e)
+    if os.environ.get("GITHUB_ACTIONS"):
+        try:
+            subir_pub(f"aviso: {len(perdidos)} hora(s) sin programar")
+        except Exception as ex:
+            log(f"(no pude guardar el aviso: {ex})")
+    texto = ("Se ha(n) perdido " + str(len(perdidos)) + " hora(s) de publicacion: " + " | ".join(lineas)
+             + "  ->  revisa la ultima carrera en verde (Actions) y Buffer (publish.buffer.com/queue).")
+    log("::warning::" + texto)
+    resumen("### ⚠️ Horas que se han perdido\n" + "\n".join(f"- {l}" for l in lineas)
+            + "\n\nSi se repite, pon `AVISOS: rojo` en el `env:` de videos.yml para que la carrera "
+              "salga en rojo y GitHub te mande un correo.")
+    return AVISOS == "rojo"
 
 
 # ======================= BUFFER =======================
@@ -546,6 +610,14 @@ def main():
         if out:
             with open(out, "a") as fh:
                 fh.write(f"toca={'si' if si else 'no'}\n")
+        if not si:
+            # Solo miramos las horas perdidas cuando NO toca hacer nada (si toca, ya las
+            # recuperar principal al ver el hueco pendiente).
+            try:
+                if avisar_perdidos():
+                    return 1
+            except Exception as ex:
+                log(f"(no pude comprobar las horas perdidas: {ex})")
         return 0
     try:
         return principal()
