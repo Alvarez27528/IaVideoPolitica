@@ -153,17 +153,39 @@ def hueco_que_toca(e, ahora):
 
 
 # ======================= BUFFER =======================
-def buffer(query, variables=None):
+def buffer(query, variables=None, reintentos=3):
+    """reintentos=1 para lo que sea solo comprobacion: si Buffer esta caido no queremos
+    perder un minuto durmiendo entre reintentos."""
     clave = os.environ.get("BUFFER_API_KEY", "").strip()
     if not clave:
         raise RuntimeError("Falta la clave de Buffer: GitHub → Settings → Secrets → Actions → BUFFER_API_KEY")
-    import requests
-    for intento in range(3):
+    # Si el paso de 'pip install' no llego a ejecutarse (el runner va justo o pip fallo),
+    # aqui caemos a urllib de la libreria estandar: Buffer se puede consultar SIN requests.
+    try:
+        import requests
+    except ImportError:
+        requests = None
+    import urllib.error, urllib.request
+    EXC = (requests.RequestException,) if requests else (urllib.error.URLError, OSError)
+
+    def llamar(payload):
+        cab = {"Authorization": f"Bearer {clave}", "Content-Type": "application/json"}
+        if requests:
+            return requests.post(API, timeout=60, json=payload, headers=cab)
+        req = urllib.request.Request(API, data=json.dumps(payload).encode(), headers=cab, method="POST")
         try:
-            r = requests.post(API, timeout=60, json={"query": query, "variables": variables or {}},
-                              headers={"Authorization": f"Bearer {clave}", "Content-Type": "application/json"})
-        except requests.RequestException as ex:
-            if intento == 2:
+            with urllib.request.urlopen(req, timeout=60) as f:
+                cuerpo, codigo = f.read().decode(errors="ignore"), f.status
+        except urllib.error.HTTPError as ex:
+            cuerpo, codigo = ex.read().decode(errors="ignore"), ex.code
+        return type("Resp", (), {"status_code": codigo,
+                                 "json": lambda self=None: json.loads(cuerpo or "{}")})()
+
+    for intento in range(max(1, reintentos)):
+        try:
+            r = llamar({"query": query, "variables": variables or {}})
+        except EXC as ex:
+            if intento == max(1, reintentos) - 1:
                 raise RuntimeError(f"No conecto con Buffer: {ex}")
             time.sleep(10)
             continue
@@ -179,13 +201,32 @@ def buffer(query, variables=None):
     raise RuntimeError("Buffer no responde (demasiadas peticiones o caído)")
 
 
+# Buffer ha cambiado algunas veces como llama a cada red en el campo "service"
+# (tiktok -> tiktok_business, instagram -> instagram_business...). Si eso vuelve a pasar,
+# el filtro viejo se quedaba sin canales y el robot hacia el video SIN programar nada, que
+# es exactamente el sintoma de "lo hace pero no lo manda a Buffer". CANON acepta los dos
+# nombres y, si aun asi no cuadra, el log dice CUALES son los que devuelve Buffer.
+CANON = {"tiktok": "tiktok", "tiktok_business": "tiktok", "tiktok_global": "tiktok",
+         "instagram": "instagram", "instagram_business": "instagram",
+         "facebook": "facebook", "facebook_page": "facebook", "twitter": "twitter",
+         "x": "twitter", "linkedin": "linkedin", "youtube": "youtube",
+         "gmb": "gmb", "pinterest": "pinterest"}
+
+
+def canon(serv):
+    b = str(serv or "").strip().lower().replace("-", "_")
+    return CANON.get(b, b)
+
+
 def canales_buffer():
     orgs = buffer("query { account { organizations { id name } } }")["account"]["organizations"]
     todos = []
     for o in orgs:
         q = "query { channels(input: {organizationId: %s}) { id name displayName service isQueuePaused } }" \
             % json.dumps(o["id"])
-        todos += buffer(q)["channels"]
+        for c in (buffer(q)["channels"] or []):
+            c["red"] = canon(c.get("service"))
+            todos.append(c)
     return todos
 
 
@@ -198,7 +239,7 @@ CREAR = """mutation Crear($input: CreatePostInput!) {
 
 
 def programar(canal, url, texto, cuando, modo):
-    red = canal["service"]
+    red = canal.get("red") or canon(canal.get("service"))
     entrada = {
         "text": texto[:2150],
         "channelId": canal["id"],
@@ -222,26 +263,58 @@ def programar(canal, url, texto, cuando, modo):
 
 
 def revisar_publicados(e):
-    """Mira si las publicaciones de las últimas horas salieron bien en Buffer (para avisarte si no)."""
-    malos = []
+    """Comprueba en Buffer qué pasó con lo que programamos.
+
+    Devuelve (malos, rescatados):
+      - "malos": posts que Buffer intentó publicar y fallaron.
+      - "rescatados": posts que el estado daba por programados pero que en Buffer
+        YA NO EXISTEN (los borraste, o se desconectó el canal y Buffer tiró la cola).
+        Sin esto el hueco se queda marcado como "hecho" para siempre: el robot hace
+        el vídeo, nadie lo programa y la ejecución sale en verde. Al rescatarlo le
+        devolvemos los intentos, así que se vuelve a programar si aún está a tiempo.
+    """
+    malos, rescatados = [], []
     ahora = datetime.now(timezone.utc)
-    for k, reg in e["huecos"].items():
+    limite = int(os.environ.get("CHEQUEOS_MAX", "8"))
+    hechos = 0
+    for k, reg in sorted(e["huecos"].items(), reverse=True):
         for red, p in (reg.get("posts") or {}).items():
-            if not (p and p.get("ok") and p.get("id")) or p.get("revisado"):
+            if not (p and p.get("ok") and p.get("id")):
                 continue
+            if hechos >= limite:
+                return malos, rescatados
             try:
-                if datetime.fromisoformat(k) > ahora - timedelta(minutes=20):
-                    continue
-                q = 'query { post(input: {id: %s}) { status externalLink error { message } } }' % json.dumps(p["id"])
-                d = buffer(q)["post"]
+                fecha = datetime.fromisoformat(k)
+            except ValueError:
+                continue                      # clave de MODO=ahora/borrador: no es una fecha
+            if fecha > ahora + timedelta(days=1):
+                continue                       # muy lejano, no gastes llamadas
+            hechos += 1
+            q = 'query { post(input: {id: %s}) { status externalLink error { message } } }' % json.dumps(p["id"])
+            try:
+                d = buffer(q, reintentos=1).get("post")
             except Exception:
+                continue                       # si Buffer no contesta hoy, no tocamos nada
+            if not d:                          # <-- antes esto petaba y se tragaba el error
+                p.update(ok=False, revisado=False,
+                         error="ya no esta en Buffer (lo borraste o el canal se desconecto y Buffer tiro la cola)")
+                reg["rescates"] = reg.get("rescates", 0) + 1
+                if reg["rescates"] <= 2:
+                    reg["intentos"] = 0        # le damos otra oportunidad a este hueco
+                    rescatados.append(f"{red} ({k[:16]})")
                 continue
-            if d["status"] == "sent":
+            if d.get("status") == "sent":
                 p.update(revisado=True, enlace=d.get("externalLink") or "")
-            elif d["status"] == "error":
+            elif d.get("status") == "error":
                 p.update(revisado=True, ok=False, error=(d.get("error") or {}).get("message") or "error en Buffer")
                 malos.append(f"{red} ({k[:16]}): {p['error']}")
-    return malos
+            elif d.get("status") in ("canceled", "cancelled", "deleted"):
+                p.update(ok=False, revisado=False, error=f"Buffer marco el post como {d['status']}")
+                reg["intentos"] = 0
+                rescatados.append(f"{red} ({k[:16]})")
+            else:
+                p.update(revisado=False, estado=d.get("status"))   # sigue en la cola: lo miraremos otra vez
+    return malos, rescatados
 
 
 # ======================= CREAR EL VÍDEO =======================
@@ -305,6 +378,18 @@ def principal():
     bajar_pub()
     e = cargar_estado()
     tz = zona()
+    # Primero miramos QUEDA ALGO PENDIENTE (aunque Buffer lo diera por hecho y luego lo perdiera),
+    # y despues decidimos que hueco toca. Si fuera al reves, un programado que volvio a Buffer
+    # nunca se recuperaria: la hora ya habria pasado.
+    malos, rescatados = [], []
+    if os.environ.get("BUFFER_API_KEY", "").strip():
+        try:
+            malos, rescatados = revisar_publicados(e)
+            if rescatados:
+                guardar_estado(e)
+                log("♻️ Buffer perdió estos programados y los vuelvo a intentar: " + ", ".join(rescatados))
+        except Exception as ex:
+            log(f"(no pude revisar publicaciones anteriores: {ex})")
     if MODO == "auto":
         hueco = hueco_que_toca(e, ahora)
         if not hueco:
@@ -318,14 +403,16 @@ def principal():
 
     # 0. Comprobar Buffer ANTES de gastar tiempo en el vídeo
     local_sin_clave = not os.environ.get("BUFFER_API_KEY") and not os.environ.get("GITHUB_ACTIONS")
-    canales = [] if local_sin_clave else [c for c in canales_buffer() if c["service"] in REDES]
+    todos = [] if local_sin_clave else canales_buffer()
+    if not local_sin_clave:
+        # Una linea que responde a "¿ve Buffer mi canal?" en CADA carrera que hace un video
+        log("📡 Buffer: " + (", ".join(f"{c.get('red') or c.get('service')}="
+                                     f"{c.get('displayName') or c.get('name')}"
+                                     + ("(cola EN PAUSA)" if c.get("isQueuePaused") else "")
+                                     for c in todos) or "la cuenta no tiene NI UN canal conectado"))
+    canales = [c for c in todos if c.get("red") in REDES]
 
-    # ¿Salieron bien las anteriores?
-    malos = []
-    try:
-        malos = [] if local_sin_clave else revisar_publicados(e)
-    except Exception as ex:
-        log(f"(no pude revisar publicaciones anteriores: {ex})")
+    # (la revision de lo anterior ya se hizo arriba, antes de elegir hueco)
 
     # 1. Vídeo (si no se hizo ya en un intento anterior)
     if not reg.get("url"):
@@ -351,20 +438,29 @@ def principal():
     if local_sin_clave:
         log("ℹ Sin BUFFER_API_KEY: no programo nada (prueba local). Vídeo en " + reg["url"])
         return 0
-    faltan = [r for r in REDES if r not in {c["service"] for c in canales}]
+    faltan = [r for r in REDES if r not in {c.get("red") for c in canales}]
     if faltan:
-        errores.append(f"No tienes conectado en Buffer: {', '.join(faltan)}")
+        errores.append(
+            f"Buffer no tiene ningun canal que se llame '{', '.join(faltan)}' para esta cuenta. "
+            f"Lo que Buffer SI te devuelve es: "
+            + (", ".join(f"{c.get('service')}={c.get('displayName') or c.get('name')}" for c in todos)
+               or "(nada)")
+            + "  -> o conectas ese canal en publish.buffer.com, o cambias REDES en videos.yml "
+              "(las horas y las redes se editan en el 'env:' del workflow)")
     for c in canales:
-        if (reg["posts"].get(c["service"]) or {}).get("ok"):
+        red = c["red"]
+        if (reg["posts"].get(red) or {}).get("ok"):
+            log(f"   {red}: ya estaba programado para este hueco, no lo repito")
             continue
         try:
             post = programar(c, reg["url"], reg["texto"], hueco, modo)
-            reg["posts"][c["service"]] = {"ok": True, "id": post["id"], "estado": post.get("status")}
-            log(f"✅ {c['service']}: {'en borradores' if modo == 'borrador' else 'programado'} "
+            reg["posts"][red] = {"ok": True, "id": post["id"], "estado": post.get("status"),
+                                 "canal": c.get("name") or c.get("displayName") or ""}
+            log(f"✅ {red}: {'en borradores' if modo == 'borrador' else 'programado'} "
                 f"({hueco.astimezone(tz):%d/%m %H:%M})")
         except Exception as ex:
-            reg["posts"][c["service"]] = {"ok": False, "error": str(ex)[:300]}
-            errores.append(f"{c['service']}: {str(ex)[:300]}")
+            reg["posts"][red] = {"ok": False, "error": str(ex)[:300]}
+            errores.append(f"{red}: {str(ex)[:300]}")
     reg["intentos"] = reg.get("intentos", 0) + 1
     e["huecos"][clave] = reg
     guardar_estado(e)
@@ -377,6 +473,10 @@ def principal():
                         for r, p in reg["posts"].items()))
     for m in malos:
         errores.append("Buffer no pudo publicar → " + m)
+    if rescatados:
+        log("::warning::Un programado que el robot daba por bueno ya no estaba en Buffer ("
+            + ", ".join(rescatados) + "). Reintentado. Si esto se repite: el canal se desconecta "
+            "a menudo, o la cola esta llena (el plan gratis de Buffer admite 10 programados por canal).")
     if errores:
         resumen("### ❌ Problemas\n" + "\n".join(f"- {x}" for x in errores))
         return 1        # la ejecución sale en rojo y GitHub te manda un correo
@@ -385,14 +485,63 @@ def principal():
 
 def main():
     if "--canales" in sys.argv:
-        for c in canales_buffer():
-            log(f"  {c['service']:10} {c.get('displayName') or c['name']:30} id={c['id']}"
-                + ("  (cola en PAUSA)" if c.get("isQueuePaused") else ""))
+        try:
+            lista = canales_buffer()
+        except Exception as ex:
+            log(f"(Buffer no contesto: {ex})")
+            return 1
+        for c in lista:
+            marca = "LO USO" if c.get("red") in REDES else "(ignorado: no esta en REDES)"
+            log(f"  {str(c['service']):18} -> {c.get('red'):10} "
+                f"{(c.get('displayName') or c['name'] or '')[:28]:30} {marca}"
+                + ("  ¡COLA EN PAUSA!" if c.get("isQueuePaused") else ""))
+        log(f"  (REDES = {','.join(REDES)}; si un canal sale '(ignorado)' conecta ese canal "
+            f"en Buffer o añade su nombre a REDES en el workflow)")
         return 0
     if "--toca" in sys.argv:
         bajar_pub()
-        si = MODO != "auto" or hueco_que_toca(cargar_estado(), datetime.now(timezone.utc)) is not None
-        log("¿Toca vídeo ahora? " + ("SÍ" if si else "no"))
+        ahora = datetime.now(timezone.utc)
+        tz = zona()
+        local = ahora.astimezone(tz)
+        est = cargar_estado()
+        if MODO == "auto" and os.environ.get("BUFFER_API_KEY", "").strip():
+            # Antes de decir "no toca" comprobamos en Buffer que lo dado por bueno lo este de
+            # verdad. Si un programado volo (lo borraste, o el canal se desconecto y Buffer tiro
+            # la cola), ese hueco vuelve a estar pendiente y este paso dira SÍ en vez de callarse.
+            try:
+                _, resc = revisar_publicados(est)
+                if resc:
+                    log("♻️ en Buffer ya no estan: " + ", ".join(resc) + " -> se reintentan")
+            except Exception as ex:
+                log(f"(no pude revisar Buffer en este paso: {ex})")
+        hueco = None if MODO != "auto" else hueco_que_toca(est, ahora)
+        si = MODO != "auto" or hueco is not None
+        log("¿Toca vídeo ahora? " + ("SÍ" if si else "no") + f"   (MODO={MODO}, hora del runner: "
+            f"{local:%H:%M:%S} de {tz})")
+        if not si:
+            # Por que no: la proxima hora de publicacion y cuanto falta para ella. Si esto sale
+            # "no toca" todos los dias, el problema son las HORARIOS/zona, no Buffer.
+            esper = []
+            for d in (0, 1):
+                for h in sorted(HORARIOS):
+                    hh, mm = map(int, h.split(":"))
+                    t = datetime((local + timedelta(days=d)).year, (local + timedelta(days=d)).month,
+                                 (local + timedelta(days=d)).day, hh, mm, tzinfo=tz)
+                    if t > local:
+                        esper.append((t, (t - local).total_seconds() / 60))
+            if esper:
+                t, f = sorted(esper)[0]
+                log(f"   la siguiente es {t:%H:%M} (faltan {f:.0f} min; esta hace video entre "
+                    f"{ANTELACION_MIN} min antes y {RETRASO_MAX_MIN} min despues)")
+                if f > ANTELACION_MIN:
+                    log(f"   por eso hoy no toca: habria que lanzarlo a las "
+                        f"{(t - timedelta(minutes=ANTELACION_MIN)):%H:%M} o mas tarde. "
+                        f"Si el repo es publico y el cron es '23 * * * *', el runner puede "
+                        f"retrasarse; sube ANTELACION_MIN (p.ej. 170) en el 'env:' de videos.yml")
+            e0 = cargar_estado()
+            hechos = sorted(k for k in e0["huecos"] if k[:10] == local.isoformat()[:10])
+            log(f"   huecos de hoy ya en el estado: {len(hechos)}"
+                + ("" if hechos else " (ninguno: el robot no ha hecho ninguno hoy)"))
         out = os.environ.get("GITHUB_OUTPUT")
         if out:
             with open(out, "a") as fh:
