@@ -1,0 +1,42 @@
+{
+ "huecos": {
+  "2026-11-20T09:00:00+01:00": {
+   "posts": {},
+   "intentos": 0,
+   "avisado": true
+  },
+  "2026-11-20T21:00:00+01:00": {
+   "posts": {},
+   "intentos": 0,
+   "avisado": true
+  },
+  "2026-11-21T09:00:00+01:00": {
+   "posts": {},
+   "intentos": 0,
+   "avisado": true
+  },
+  "2026-11-21T21:00:00+01:00": {
+   "posts": {
+    "tiktok": {
+     "ok": true,
+     "id": "6b01f2e0142c9575193bc1a9",
+     "estado": "scheduled",
+     "canal": "politicasinfiltrosesp"
+    },
+    "instagram": {
+     "ok": true,
+     "id": "6b01f2e08bd84d5966138c6b",
+     "estado": "scheduled",
+     "canal": "politicasinfiltroesp"
+    }
+   },
+   "intentos": 1,
+   "video": "20261121_2100_sanchez-deja-al-psoe-en-shock.mp4",
+   "titulo": "Sánchez deja al PSOE en shock",
+   "fuente": "El Mundo",
+   "link": "https://www.elmundo.es/elecciones/elecciones-generales/2026/11/20/6b008b10e9cf4a463c8b45bb.html",
+   "texto": "El PSOE en shock tras el cara a cara con Feijóo. Estrategia 'no confrontacional' no convence a los suyos. ¿Qué pensáis de la estrategia de Sánchez?\n\n#Sánchez #Feijóo #PSOE #EleccionesGenerales #DebatePolitico #PolíticaEspañola #politica #españa #noticias #politicasinfiltros\n\nFuente: El Mundo",
+   "url": "https://alvarez27528.github.io/IaVideoPolitica/v/20261121_2100_sanchez-deja-al-psoe-en-shock.mp4"
+  }
+ }
+}
