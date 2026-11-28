@@ -1,0 +1,72 @@
+{
+ "huecos": {
+  "2026-11-24T09:00:00+01:00": {
+   "posts": {},
+   "intentos": 0,
+   "avisado": true
+  },
+  "2026-11-24T21:00:00+01:00": {
+   "posts": {},
+   "intentos": 0,
+   "avisado": true
+  },
+  "2026-11-25T09:00:00+01:00": {
+   "posts": {},
+   "intentos": 0,
+   "avisado": true
+  },
+  "2026-11-25T21:00:00+01:00": {
+   "posts": {},
+   "intentos": 0,
+   "avisado": true
+  },
+  "2026-11-26T09:00:00+01:00": {
+   "posts": {},
+   "intentos": 0,
+   "avisado": true
+  },
+  "2026-11-26T21:00:00+01:00": {
+   "posts": {
+    "tiktok": {
+     "ok": true,
+     "id": "6b0894f39068b6e07960f235",
+     "estado": "sending",
+     "canal": "politicasinfiltrosesp"
+    },
+    "instagram": {
+     "ok": true,
+     "id": "6b0894fe3accdac92cfa2aaf",
+     "estado": "sending",
+     "canal": "politicasinfiltroesp"
+    }
+   },
+   "intentos": 1,
+   "video": "20261126_2100_debate-politico-clave-29-n.mp4",
+   "titulo": "Debate político clave 29-N",
+   "fuente": "El País",
+   "link": "https://elpais.com/espana/elecciones-generales/2026-11-26/sanchez-feijoo-abascal-y-colau-afrontan-un-debate-clave-para-la-definicion-de-los-dos-bloques-ante-el-29-n.html",
+   "texto": "Sánchez, Feijóo, Abascal y Colau en debate crucial. ¿Qué propuestas presentarán para el 29-N?\n\n#DebatePolítico #29N #Sánchez #Feijóo #Abascal #Colau #politica #españa #noticias #politicasinfiltros\n\nFuente: El País",
+   "url": "https://alvarez27528.github.io/IaVideoPolitica/v/20261126_2100_debate-politico-clave-29-n.mp4"
+  },
+  "2026-11-27T09:00:00+01:00": {
+   "posts": {},
+   "intentos": 0,
+   "avisado": true
+  },
+  "2026-11-27T21:00:00+01:00": {
+   "posts": {},
+   "intentos": 0,
+   "avisado": true
+  },
+  "2026-11-28T09:00:00+01:00": {
+   "posts": {},
+   "intentos": 0,
+   "avisado": true
+  },
+  "2026-11-28T21:00:00+01:00": {
+   "posts": {},
+   "intentos": 0,
+   "avisado": true
+  }
+ }
+}
